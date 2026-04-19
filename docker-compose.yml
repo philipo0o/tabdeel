@@ -1,0 +1,87 @@
+version: '3.8'
+
+services:
+  # Database Service
+  postgres:
+    image: postgres:15
+    container_name: tabdeel_postgres
+    restart: always
+    environment:
+      POSTGRES_DB: biking_club
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - tabdeel-network
+
+  # PgAdmin Service (Optional - for DB management)
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: tabdeel_pgadmin
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@tabdeel.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "8080:80"
+    depends_on:
+      - postgres
+    networks:
+      - tabdeel-network
+
+  # Backend Service (NestJS)
+  backend:
+    build:
+      context: ./backend/tabdeel-backend
+      dockerfile: Dockerfile
+    container_name: tabdeel_backend
+    # Mount source code for live reload (optional, requires adjustment in Dockerfile or command)
+    # For now, we use the build context.
+    ports:
+      - "3001:3001"
+    environment:
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_NAME=biking_club
+      - PORT=3001
+      - NODE_ENV=development
+    depends_on:
+      - postgres
+    networks:
+      - tabdeel-network
+    command: npm run start:dev
+    volumes:
+      - ./backend/tabdeel-backend:/usr/src/app
+      - /usr/src/app/node_modules
+
+  # Frontend Service (Next.js)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    container_name: tabdeel_frontend
+    ports:
+      - "3002:3002"
+    environment:
+      - NODE_ENV=development
+      # Accessible from browser
+      - NEXT_PUBLIC_API_URL=http://localhost:3001/api 
+    depends_on:
+      - backend
+    networks:
+      - tabdeel-network
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+
+volumes:
+  postgres_data:
+
+networks:
+  tabdeel-network:
+    driver: bridge

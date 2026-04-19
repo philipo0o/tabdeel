@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>رحلة سلسة - بدون فراغات</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { 
+            margin: 0; 
+            padding: 0;
+            background-color: #ffffff; 
+            overflow-x: hidden; 
+        }
+
+        /* الحاوية الرئيسية */
+        .main-wrapper {
+            position: relative;
+            width: 100%;
+            line-height: 0; /* لمنع أي فراغ ناتج عن المسافات بين العناصر */
+        }
+
+        /* الصورة الأساسية */
+        .road-image {
+            width: 100%;
+            height: auto;
+            display: block; /* يضمن عدم وجود فراغ أسفل الصورة */
+        }
+
+        /* نقاط المحتوى (Spots) */
+        .content-spot {
+            position: absolute;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            line-height: normal; /* إعادة ضبط الخط داخل النقاط */
+            pointer-events: none; /* لكي لا تعيق التمرير */
+        }
+
+        .content-holder {
+            width: 80%;
+            max-width: 400px;
+            min-height: 20px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.7s ease-out;
+            pointer-events: auto; /* إعادة تفعيل اللمس للمحتوى فقط */
+        }
+
+        .reveal-trigger.active .content-holder {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* توزيع المواقع بدقة بناءً على طول الصورة */
+        .spot-1 { top: 5%; }
+        .spot-2 { top: 25%; }
+        .spot-3 { top: 45%; }
+        .spot-4 { top: 65%; }
+        .spot-5 { top: 85%; }
+
+        @media (min-width: 1024px) {
+            .lg-left { justify-content: flex-start; padding-right: 15%; }
+            .lg-right { justify-content: flex-end; padding-left: 15%; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-wrapper">
+        <img src="Landing_Presetation_full_4k.png" alt="Road Map" class="road-image">
+
+        <div class="content-spot spot-1 reveal-trigger">
+            <div class="content-holder">
+                </div>
+        </div>
+
+        <div class="content-spot spot-2 reveal-trigger lg-right">
+            <div class="content-holder">
+                </div>
+        </div>
+
+        <div class="content-spot spot-3 reveal-trigger lg-left">
+            <div class="content-holder">
+                </div>
+        </div>
+
+        <div class="content-spot spot-4 reveal-trigger lg-right">
+            <div class="content-holder">
+                </div>
+        </div>
+
+        <div class="content-spot spot-5 reveal-trigger">
+            <div class="content-holder" style="margin-bottom: 50px;">
+                </div>
+        </div>
+    </div>
+
+    <script>
+        const observerOptions = { threshold: 0.1 };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal-trigger').forEach(trigger => {
+            observer.observe(trigger);
+        });
+    </script>
+
+</body>
+</html>
