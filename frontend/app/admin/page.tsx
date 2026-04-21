@@ -342,7 +342,7 @@ function ArticlesManager() {
           <div className="space-y-4">
             <div><label className="block text-sm font-medium mb-1">Title</label><input required type="text" value={title} onChange={e => setTitle(e.target.value)} className="w-full px-4 py-2 border rounded-lg" placeholder="Article Title" /></div>
             <div><label className="block text-sm font-medium mb-1">Excerpt</label><input type="text" value={excerpt} onChange={e => setExcerpt(e.target.value)} className="w-full px-4 py-2 border rounded-lg" placeholder="Short description" /></div>
-            <div><label className="block text-sm font-medium mb-1">Content</label><textarea required value={content} onChange={e => setContent(e.target.value)} rows={6} className="w-full px-4 py-2 border rounded-lg" placeholder="Write content..."></textarea></div>
+            <div><label className="block text-sm font-medium mb-1">Content (Fallback text)</label><textarea required value={content} onChange={e => setContent(e.target.value)} rows={6} className="w-full px-4 py-2 border rounded-lg" placeholder="Write content if you don't upload a document"></textarea></div>
             
             <div className="grid grid-cols-2 gap-4">
               <div><label className="block text-sm font-medium mb-1">Cover Image {editingId && '(optional)'}</label><input type="file" accept="image/*" onChange={e => setCoverImage(e.target.files?.[0] || null)} className="w-full px-4 py-2 border rounded-lg bg-white" /></div>
@@ -495,6 +495,8 @@ function AlbumsManager() {
   const [descAr, setDescAr] = useState('')
   const [category, setCategory] = useState('bikes')
   const [coverPhoto, setCoverPhoto] = useState<File | null>(null)
+  const [albumPhotos, setAlbumPhotos] = useState<File[]>([])
+  const [existingPhotos, setExistingPhotos] = useState<any[]>([])
 
   useEffect(() => { if (mode === 'list') fetchItems() }, [mode])
 
@@ -505,7 +507,8 @@ function AlbumsManager() {
   const handleEdit = (item: any) => {
     setEditingId(item.id); setTitleEn(item.titleEn || ''); setTitleAr(item.titleAr || '')
     setDescEn(item.descriptionEn || ''); setDescAr(item.descriptionAr || ''); setCategory(item.category || 'bikes')
-    setCoverPhoto(null); setStatusMsg({ type: '', text: '' }); setMode('form')
+    setExistingPhotos(item.photos || [])
+    setCoverPhoto(null); setAlbumPhotos([]); setStatusMsg({ type: '', text: '' }); setMode('form')
   }
 
   const handleDelete = async (id: number) => {
@@ -515,7 +518,16 @@ function AlbumsManager() {
 
   const handleAddNew = () => {
     setEditingId(null); setTitleEn(''); setTitleAr(''); setDescEn(''); setDescAr(''); setCategory('bikes')
-    setCoverPhoto(null); setStatusMsg({ type: '', text: '' }); setMode('form')
+    setExistingPhotos([])
+    setCoverPhoto(null); setAlbumPhotos([]); setStatusMsg({ type: '', text: '' }); setMode('form')
+  }
+
+  const handleDeleteExistingPhoto = async (photoId: number) => {
+    if (!confirm('Delete this photo?')) return
+    try {
+      await api.delete(`/api/albums/photos/${photoId}`)
+      setExistingPhotos(prev => prev.filter(p => p.id !== photoId))
+    } catch(e) { alert('Failed to delete photo') }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -531,13 +543,27 @@ function AlbumsManager() {
       const payload: any = { titleEn, titleAr, descriptionEn: descEn, descriptionAr: descAr, category, authorId: 1, isPublished: true }
       if (coverPhotoUrl) payload.coverPhoto = coverPhotoUrl
 
+      let albumIdToUse = editingId;
       if (editingId) {
         await api.put(`/api/albums/${editingId}`, payload)
         setStatusMsg({ type: 'success', text: 'Updated!' })
       } else {
-        await api.post('/api/albums', payload)
+        const createRes = await api.post('/api/albums', payload)
+        albumIdToUse = createRes.data.id
         setStatusMsg({ type: 'success', text: 'Created!' })
       }
+
+      // Upload extra photos
+      if (albumPhotos.length > 0 && albumIdToUse) {
+        setStatusMsg({ type: 'success', text: 'Uploading additional photos...' })
+        for (const file of albumPhotos) {
+          const fd = new FormData(); fd.append('file', file)
+          const pRes = await api.post('/api/upload', fd, { headers: { 'Content-Type': 'multipart/form-data' } })
+          await api.post('/api/albums/photos', { albumId: albumIdToUse, imageUrl: pRes.data.url, order: 0 })
+        }
+        setStatusMsg({ type: 'success', text: 'All photos uploaded successfully!' })
+      }
+
       setTimeout(() => setMode('list'), 1500)
     } catch (error) {
       console.error(error); setStatusMsg({ type: 'error', text: 'Failed.' })
@@ -592,6 +618,59 @@ function AlbumsManager() {
               </div>
               <div><label className="block text-sm font-medium mb-1">Cover Photo {editingId && '(optional)'}</label><input type="file" accept="image/*" onChange={e => setCoverPhoto(e.target.files?.[0] || null)} className="w-full px-4 py-2 border rounded-lg bg-white" /></div>
             </div>
+
+            <div>
+              <div className="flex items-center justify-between mb-1">
+                <label className="block text-sm font-medium">New Inner Pictures (Select Multiple)</label>
+                <div className="text-xs text-gray-500">You can select batch files multiple times</div>
+              </div>
+              <input 
+                type="file" 
+                accept="image/*" 
+                multiple 
+                onChange={e => {
+                  const files = Array.from(e.target.files || [])
+                  setAlbumPhotos(prev => [...prev, ...files])
+                  e.target.value = '' // reset input so same file can be selected if removed
+                }} 
+                className="w-full px-4 py-2 border rounded-lg bg-white" 
+              />
+              
+              {albumPhotos.length > 0 && (
+                <div className="mt-4">
+                  <p className="text-sm font-semibold text-blue-600 mb-2">{albumPhotos.length} new photos ready to upload:</p>
+                  <div className="flex flex-wrap gap-2">
+                    {albumPhotos.map((f, i) => (
+                      <div key={i} className="flex items-center bg-blue-50 border border-blue-100 px-2 py-1 rounded text-xs">
+                        <span className="truncate max-w-[150px] mr-2">{f.name}</span>
+                        <button 
+                          type="button" 
+                          onClick={() => setAlbumPhotos(prev => prev.filter((_, idx) => idx !== i))}
+                          className="text-red-500 hover:text-red-700 font-bold"
+                        >
+                          &times;
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {existingPhotos.length > 0 && (
+              <div className="mt-4">
+                <label className="block text-sm font-medium mb-2">Existing Photos ({existingPhotos.length})</label>
+                <div className="flex flex-wrap gap-4">
+                  {existingPhotos.map(photo => (
+                    <div key={photo.id} className="relative border p-1 rounded bg-white">
+                      <img src={photo.imageUrl.startsWith('http') ? photo.imageUrl : api.defaults.baseURL + photo.imageUrl} alt="" className="w-24 h-24 object-cover" />
+                      <button type="button" onClick={() => handleDeleteExistingPhoto(photo.id)} className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs shadow hover:bg-red-600">&times;</button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            
             <button disabled={loading} type="submit" className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 disabled:bg-blue-400">{loading ? 'Saving...' : (editingId ? 'Update' : 'Publish')}</button>
           </div>
         </form>

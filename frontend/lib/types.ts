@@ -35,9 +35,10 @@ export interface LoginResponse {
 export interface Article {
   id: number
   title: string
-  content: string
+  content?: string
   excerpt?: string
   featuredImage?: string
+  fileAttachment?: string
   status: 'draft' | 'published' | 'archived'
   viewCount: number
   authorId: number
@@ -101,4 +102,36 @@ export interface Publication {
   createdAt: string
   updatedAt: string
   authorId: number
+}
+
+export enum AlbumCategory {
+  BIKES = 'bikes',
+  ROUTES = 'routes',
+  EVENTS = 'events',
+  MEMBERS = 'members',
+  GENERAL = 'general',
+}
+
+export interface AlbumPhoto {
+  id: number
+  imageUrl: string
+  captionEn?: string
+  captionAr?: string
+  order: number
+}
+
+export interface Album {
+  id: number
+  titleEn: string
+  titleAr: string
+  descriptionEn?: string
+  descriptionAr?: string
+  category: AlbumCategory
+  coverPhoto?: string
+  viewCount: number
+  isPublished: boolean
+  createdAt: string
+  updatedAt: string
+  authorId: number
+  photos?: AlbumPhoto[]
 }

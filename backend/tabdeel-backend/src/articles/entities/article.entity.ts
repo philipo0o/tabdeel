@@ -16,8 +16,8 @@ export class Article {
   @Column()
   title: string;
 
-  @Column('text')
-  content: string;
+  @Column({ type: 'text', nullable: true })
+  content?: string;
 
   @Column({ nullable: true })
   excerpt?: string;

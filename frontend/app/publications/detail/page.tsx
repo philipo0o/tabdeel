@@ -2,7 +2,7 @@
 
 import { useLanguage } from '@/lib/LanguageContext'
 import { useEffect, useState, Suspense } from 'react'
-import api from '@/lib/api'
+import api, { getImageUrl } from '@/lib/api'
 import { Publication } from '@/lib/types'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
@@ -116,7 +116,6 @@ function PublicationDetailContent() {
   const title = language === 'ar' ? publication.titleAr : publication.titleEn
   const description = language === 'ar' ? publication.descriptionAr : publication.descriptionEn
   const fileUrl = publication.fileUrl || publication.pdfUrl
-  const isPdf = fileUrl && fileUrl.toLowerCase().endsWith('.pdf')
   const isWord = fileUrl && (fileUrl.toLowerCase().endsWith('.doc') || fileUrl.toLowerCase().endsWith('.docx'))
 
   return (
@@ -133,7 +132,7 @@ function PublicationDetailContent() {
           {publication.coverImage ? (
             <div className="w-full h-64 md:h-96 relative">
               <img 
-                src={publication.coverImage} 
+                src={getImageUrl(publication.coverImage)} 
                 alt={title}
                 className="w-full h-full object-contain bg-gray-100"
               />
@@ -181,34 +180,29 @@ function PublicationDetailContent() {
               </div>
 
               {fileUrl ? (
-                isPdf ? (
-                  <div className="w-full h-[800px] border border-gray-300 rounded shadow-sm bg-white overflow-hidden">
-                    <iframe src={fileUrl} className="w-full h-full" title="PDF Viewer" />
-                  </div>
-                ) : isWord ? (
+                isWord ? (
                   <div className="w-full bg-white border border-gray-300 p-8 rounded shadow-sm min-h-[500px]">
                     {parseLoading ? (
                       <div className="flex flex-col items-center justify-center h-64 text-gray-500">
                         <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500 mb-4"></div>
-                        <p>Parsing Word Document...</p>
+                        <p>Parsing Word Document to HTML...</p>
                       </div>
                     ) : htmlContent ? (
                       <div className="prose max-w-none prose-blue" dangerouslySetInnerHTML={{ __html: htmlContent }} />
                     ) : (
-                      <p className="text-center text-gray-500 py-12">Failed to load content.</p>
+                      <p className="text-center text-gray-500 py-12">Failed to parse Word document.</p>
                     )}
                   </div>
                 ) : (
-                  <div className="text-center py-12 bg-white rounded border border-gray-200">
-                    <p className="text-gray-600 mb-4">View functionality is not available for this file type.</p>
-                    <a href={fileUrl} target="_blank" rel="noopener noreferrer" className="inline-block bg-blue-600 text-white px-6 py-2 rounded shadow hover:bg-blue-700 font-medium transition-colors">
-                      Download File
-                    </a>
+                  <div className="text-center py-12 text-gray-600 bg-white rounded border border-gray-200">
+                    <p className="mb-2 font-semibold">Cannot display PDF as HTML.</p>
+                    <p className="text-sm text-gray-500 max-w-md mx-auto">Because you requested not to use a PDF Viewer or Download Button, and PDFs cannot be converted to HTML text, this file cannot be displayed.</p>
+                    <p className="text-sm text-gray-500 max-w-md mx-auto mt-2 italic">Please upload a .doc or .docx Word Document in the Admin panel to see HTML content extraction.</p>
                   </div>
                 )
               ) : (
                 <div className="text-center py-12 text-gray-500 bg-white rounded border border-gray-200">
-                  <p>No document content available.</p>
+                  <p>No document available.</p>
                 </div>
               )}
             </div>

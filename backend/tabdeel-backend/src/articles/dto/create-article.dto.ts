@@ -7,8 +7,8 @@ export class CreateArticleDto {
   title: string;
 
   @IsString()
-  @IsNotEmpty()
-  content: string;
+  @IsOptional()
+  content?: string;
 
   @IsString()
   @IsOptional()

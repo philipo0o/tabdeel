@@ -70,7 +70,7 @@ export default function Articles() {
                       {article.publishedAt ? new Date(article.publishedAt).toLocaleDateString() : 'Draft'}
                     </span>
                     <Link
-                      href={`/articles/${article.id}`}
+                      href={`/articles/detail?id=${article.id}`}
                       className="text-blue-600 hover:text-blue-800 font-medium"
                     >
                       {t('readMore')}
