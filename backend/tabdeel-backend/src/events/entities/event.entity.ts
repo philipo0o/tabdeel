@@ -65,6 +65,12 @@ export class Event {
   @Column({ type: 'decimal', precision: 11, scale: 8, nullable: true })
   longitude?: number;
 
+  @Column({ nullable: true })
+  organizerName?: string;
+
+  @Column({ nullable: true })
+  socialMediaUrl?: string;
+
   @CreateDateColumn()
   createdAt: Date;
 

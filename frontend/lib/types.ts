@@ -135,3 +135,28 @@ export interface Album {
   authorId: number
   photos?: AlbumPhoto[]
 }
+
+export enum EventType {
+  RIDE = 'ride',
+  MEETING = 'meeting',
+  WORKSHOP = 'workshop',
+  SOCIAL = 'social',
+  COMPETITION = 'competition',
+}
+
+export interface Event {
+  id: number
+  title: string
+  description?: string
+  location: string
+  startDate: string
+  endDate: string
+  type: EventType | string
+  featuredImage?: string
+  status: 'upcoming' | 'ongoing' | 'completed' | 'cancelled' | string
+  authorId: number
+  organizerName?: string
+  socialMediaUrl?: string
+  createdAt: string
+  updatedAt: string
+}

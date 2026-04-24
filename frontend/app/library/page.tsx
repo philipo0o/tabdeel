@@ -16,8 +16,8 @@ export default function Library() {
   }, [language])
 
   // Choose image based on language
-  const imageSrc = language === 'en' 
-    ? "/library-sketch-EN.png" 
+  const imageSrc = language === 'en'
+    ? "/library-sketch-EN.png"
     : "/library-sketch.png"
 
   return (
@@ -30,9 +30,9 @@ export default function Library() {
               <div className="text-gray-400 text-lg">Loading...</div>
             </div>
           )}
-          
+
           {/* Optimized Next.js Image component for faster loading */}
-          <Image 
+          <Image
             src={imageSrc}
             alt="Hand-drawn library sketch"
             width={800}
@@ -54,13 +54,13 @@ export default function Library() {
           />
 
           {/* Invisible clickable areas over each section */}
-          
+
           {/* منشورات (Publications) - Left frame */}
-          <div 
+          <div
             className="absolute cursor-pointer hover:bg-opacity-10 transition-colors"
             style={{
               top: '15%',
-              left: '5%',
+              right: '5%',
               width: '25%',
               height: '50%'
             }}
@@ -69,10 +69,10 @@ export default function Library() {
           ></div>
 
           {/* ألبومات (Albums) - Center ornate frame */}
-          <div 
+          <div
             className="absolute cursor-pointer hover:bg-opacity-10 transition-colors"
             style={{
-              top: '20%',
+              top: '40%',
               left: '40%',
               width: '20%',
               height: '20%'
@@ -82,11 +82,11 @@ export default function Library() {
           ></div>
 
           {/* مقالات (Articles) - Right frame */}
-          <div 
+          <div
             className="absolute cursor-pointer  hover:bg-opacity-10 transition-colors"
             style={{
               top: '15%',
-              right: '5%',
+              left: '5%',
               width: '25%',
               height: '50%'
             }}
@@ -95,13 +95,13 @@ export default function Library() {
           ></div>
 
           {/* أخبار تبديل (Tabdeel News) - Bottom frame */}
-          <div 
+          <div
             className="absolute cursor-pointer hover:bg-opacity-10 transition-colors"
             style={{
-              top: '60%',
-              left: '25%',
-              width: '50%',
-              height: '40%'
+              top: '20%',
+              left: '40%',
+              width: '20%',
+              height: '20%'
             }}
             onClick={() => router.push('/news')}
             title={t('news')}
@@ -111,8 +111,8 @@ export default function Library() {
 
       {/* Footer Image - Full Width */}
       <div className="w-full mt-auto">
-        <img 
-          src="/library-sketch-footer.png" 
+        <img
+          src="/library-sketch-footer.png"
           alt="Library footer illustration"
           className="w-full h-auto block"
           style={{

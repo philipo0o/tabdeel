@@ -694,6 +694,8 @@ function EventsManager() {
   const [endDate, setEndDate] = useState('')
   const [type, setType] = useState('ride')
   const [featuredImage, setFeaturedImage] = useState<File | null>(null)
+  const [organizerName, setOrganizerName] = useState('')
+  const [socialMediaUrl, setSocialMediaUrl] = useState('')
 
   useEffect(() => { if (mode === 'list') fetchItems() }, [mode])
 
@@ -711,6 +713,8 @@ function EventsManager() {
     setEditingId(item.id); setTitle(item.title || ''); setDescription(item.description || '')
     setLocation(item.location || ''); setType(item.type || 'ride')
     setStartDate(formatForInput(item.startDate)); setEndDate(formatForInput(item.endDate))
+    setOrganizerName(item.organizerName || '')
+    setSocialMediaUrl(item.socialMediaUrl || '')
     setFeaturedImage(null); setStatusMsg({ type: '', text: '' }); setMode('form')
   }
 
@@ -721,7 +725,7 @@ function EventsManager() {
 
   const handleAddNew = () => {
     setEditingId(null); setTitle(''); setDescription(''); setLocation(''); setStartDate(''); setEndDate(''); setType('ride')
-    setFeaturedImage(null); setStatusMsg({ type: '', text: '' }); setMode('form')
+    setOrganizerName(''); setSocialMediaUrl(''); setFeaturedImage(null); setStatusMsg({ type: '', text: '' }); setMode('form')
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -738,7 +742,8 @@ function EventsManager() {
         title, description, location, 
         startDate: new Date(startDate).toISOString(), 
         endDate: new Date(endDate).toISOString(), 
-        type, authorId: 1, status: 'upcoming'
+        type, authorId: 1, status: 'upcoming',
+        organizerName, socialMediaUrl
       }
       if (imageUrl) payload.featuredImage = imageUrl
 
@@ -795,6 +800,10 @@ function EventsManager() {
             <div className="grid grid-cols-2 gap-4">
               <div><label className="block text-sm font-medium mb-1">Start Date/Time</label><input required type="datetime-local" value={startDate} onChange={e => setStartDate(e.target.value)} className="w-full px-4 py-2 border rounded-lg bg-white" /></div>
               <div><label className="block text-sm font-medium mb-1">End Date/Time</label><input required type="datetime-local" value={endDate} onChange={e => setEndDate(e.target.value)} className="w-full px-4 py-2 border rounded-lg bg-white" /></div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div><label className="block text-sm font-medium mb-1">Organizer Name (Optional)</label><input type="text" value={organizerName} onChange={e => setOrganizerName(e.target.value)} className="w-full px-4 py-2 border rounded-lg bg-white" /></div>
+              <div><label className="block text-sm font-medium mb-1">Social Media URL (Optional)</label><input type="url" placeholder="https://" value={socialMediaUrl} onChange={e => setSocialMediaUrl(e.target.value)} className="w-full px-4 py-2 border rounded-lg bg-white" /></div>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>

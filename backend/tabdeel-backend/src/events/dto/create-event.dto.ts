@@ -43,6 +43,14 @@ export class CreateEventDto {
   @IsOptional()
   longitude?: number;
 
+  @IsString()
+  @IsOptional()
+  organizerName?: string;
+
+  @IsString()
+  @IsOptional()
+  socialMediaUrl?: string;
+
   @IsNumber()
   authorId: number;
 }

@@ -10,7 +10,6 @@ export default function Navigation() {
 
   const navItems = [
     { href: '/', label: t('home') },
-    { href: '/about', label: t('about') },
     { href: '/services', label: t('services') },
     { href: '/bicycle-culture', label: t('bicycleCulture') },
     { href: '/calendar', label: t('calendar') },
@@ -50,7 +49,7 @@ export default function Navigation() {
                 onClick={toggleLanguage}
                 className="bg-black text-white px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors"
               >
-                {language === 'ar' ? 'EN' : 'عر'}
+                {language === 'ar' ? 'EN' : 'عربي'}
               </button>
             </div>
           </div>
@@ -62,7 +61,7 @@ export default function Navigation() {
               onClick={toggleLanguage}
               className="bg-black text-white px-2 py-1 rounded text-xs font-medium hover:bg-gray-800 transition-colors"
             >
-              {language === 'ar' ? 'EN' : 'عر'}
+              {language === 'ar' ? 'EN' : 'عربي'}
             </button>
             
             <button

@@ -4,6 +4,7 @@ import { useLanguage } from '@/lib/LanguageContext'
 import { useEffect, useState } from 'react'
 import api from '@/lib/api'
 import { News, NewsCategory } from '@/lib/types'
+import Link from 'next/link'
 
 export default function NewsPage() {
   const { t, language } = useLanguage()
@@ -100,9 +101,17 @@ export default function NewsPage() {
                     <h3 className="text-xl font-semibold mb-2 text-gray-800">
                       {language === 'ar' ? item.titleAr : item.titleEn}
                     </h3>
-                    <p className="text-gray-600">
+                    <p className="text-gray-600 line-clamp-3 mb-4">
                       {language === 'ar' ? item.contentAr : item.contentEn}
                     </p>
+                    <div className="flex justify-end mt-2">
+                       <Link
+                          href={`/news/detail?id=${item.id}`}
+                          className="text-blue-600 hover:text-blue-800 font-medium inline-flex items-center"
+                       >
+                          {t('readMore') || 'Read More'}
+                       </Link>
+                    </div>
                   </div>
                 )
               })}

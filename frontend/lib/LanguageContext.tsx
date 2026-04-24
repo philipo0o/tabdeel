@@ -15,8 +15,8 @@ const translations = {
     // Navigation
     home: 'الرئيسية',
     about: 'حول الموقع',
-    services: 'الخدمات',
-    bicycleCulture: 'ثقافة الدراجات',
+    services: 'مجتمع الدراجات',
+    bicycleCulture: 'خريطة الدراجات',
     calendar: 'التقويم',
     library: 'المكتبة',
     contact: 'تواصل معنا',
@@ -47,7 +47,7 @@ const translations = {
     routes: 'مسارات',
     
     // Bicycle Culture
-    bicycleCultureTitle: 'ثقافة الدراجات',
+    bicycleCultureTitle: 'خريطة الدراجات',
     bicycleBenefits: 'فوائد ركوب الدراجات',
     improvedFitness: 'تحسين اللياقة البدنية',
     environmentFriendly: 'صديق للبيئة',
@@ -148,8 +148,8 @@ const translations = {
     // Navigation
     home: 'Home',
     about: 'About',
-    services: 'Services',
-    bicycleCulture: 'Bicycle Culture',
+    services: 'Cycling Community',
+    bicycleCulture: 'Cycling Map',
     calendar: 'Calendar',
     library: 'Library',
     contact: 'Contact',
@@ -180,7 +180,7 @@ const translations = {
     routes: 'Routes',
     
     // Bicycle Culture
-    bicycleCultureTitle: 'Bicycle Culture',
+    bicycleCultureTitle: 'Cycling Map',
     bicycleBenefits: 'Benefits of Cycling',
     improvedFitness: 'Improved physical fitness',
     environmentFriendly: 'Environmentally friendly',
