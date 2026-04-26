@@ -10,6 +10,15 @@ export default function Calendar() {
   const [events, setEvents] = useState<Event[]>([])
   const [loading, setLoading] = useState(true)
   const [selectedDate, setSelectedDate] = useState<string | null>(null) // null means "All Days"
+  const [selectedGovernorate, setSelectedGovernorate] = useState<string | null>(null)
+
+  const EGYPT_GOVERNORATES = [
+    'Cairo', 'Alexandria', 'Giza', 'Qalyubia', 'Port Said', 'Suez', 
+    'Gharbia', 'Dakahlia', 'Ismailia', 'Asyut', 'Fayoum', 'Sharqia', 
+    'Aswan', 'Damietta', 'Beheira', 'Minya', 'Beni Suef', 'Qena', 
+    'Sohag', 'Red Sea', 'New Valley', 'Matrouh', 'North Sinai', 
+    'South Sinai', 'Luxor'
+  ].sort()
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -30,10 +39,12 @@ export default function Calendar() {
   // Extract unique days strings (e.g. "2026-02-15") from events
   const uniqueDays = Array.from(new Set(events.map(e => new Date(e.startDate).toISOString().split('T')[0])))
 
-  // Filter events based on selected date
-  const filteredEvents = selectedDate 
-    ? events.filter(e => new Date(e.startDate).toISOString().split('T')[0] === selectedDate)
-    : events
+  // Filter events based on selected date and governorate
+  const filteredEvents = events.filter(e => {
+    const matchDate = selectedDate ? new Date(e.startDate).toISOString().split('T')[0] === selectedDate : true;
+    const matchGov = selectedGovernorate ? e.governorate === selectedGovernorate : true;
+    return matchDate && matchGov;
+  })
 
   // Format helper
   const formatTime = (dateStr: string) => {
@@ -57,33 +68,52 @@ export default function Calendar() {
           </div>
         ) : (
           <>
-            {/* Day Filter Ribbon */}
-            <div className="mb-10 w-full overflow-x-auto pb-4">
-              <div className="flex space-x-3 gap-2 px-1 items-center justify-start min-w-max">
-                <button
-                  onClick={() => setSelectedDate(null)}
-                  className={`px-5 py-2.5 rounded-full whitespace-nowrap transition-all duration-200 font-semibold text-sm ${
-                    selectedDate === null 
-                    ? 'bg-blue-600 text-white shadow-md transform scale-105' 
-                    : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-100 hover:text-gray-900'
-                  }`}
-                >
-                  {language === 'ar' ? 'جميع الأيام' : 'All Days'}
-                </button>
-                {uniqueDays.map((dayStr) => (
+            {/* Filters Section */}
+            <div className="mb-10 flex flex-col md:flex-row gap-4 items-start md:items-center justify-between bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+              
+              {/* Day Filter Ribbon */}
+              <div className="w-full md:w-auto overflow-x-auto pb-2 md:pb-0 hide-scrollbar flex-grow">
+                <div className="flex space-x-3 space-x-reverse gap-2 px-1 items-center justify-start min-w-max">
                   <button
-                    key={dayStr}
-                    onClick={() => setSelectedDate(dayStr)}
-                    className={`px-5 py-2.5 rounded-full whitespace-nowrap transition-all duration-200 font-medium text-sm ${
-                      selectedDate === dayStr 
+                    onClick={() => setSelectedDate(null)}
+                    className={`px-5 py-2.5 rounded-full whitespace-nowrap transition-all duration-200 font-semibold text-sm ${
+                      selectedDate === null 
                       ? 'bg-blue-600 text-white shadow-md transform scale-105' 
-                      : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-100 hover:text-gray-900'
+                      : 'bg-gray-50 text-gray-600 border border-gray-200 hover:bg-gray-100 hover:text-gray-900'
                     }`}
                   >
-                    {formatDateDisplay(dayStr)}
+                    {language === 'ar' ? 'جميع الأيام' : 'All Days'}
                   </button>
-                ))}
+                  {uniqueDays.map((dayStr) => (
+                    <button
+                      key={dayStr}
+                      onClick={() => setSelectedDate(dayStr)}
+                      className={`px-5 py-2.5 rounded-full whitespace-nowrap transition-all duration-200 font-medium text-sm ${
+                        selectedDate === dayStr 
+                        ? 'bg-blue-600 text-white shadow-md transform scale-105' 
+                        : 'bg-gray-50 text-gray-600 border border-gray-200 hover:bg-gray-100 hover:text-gray-900'
+                      }`}
+                    >
+                      {formatDateDisplay(dayStr)}
+                    </button>
+                  ))}
+                </div>
               </div>
+
+              {/* Governorate Dropdown */}
+              <div className="w-full md:w-64 flex-shrink-0">
+                <select
+                  value={selectedGovernorate || ''}
+                  onChange={(e) => setSelectedGovernorate(e.target.value || null)}
+                  className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-gray-700 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all shadow-sm cursor-pointer"
+                >
+                  <option value="">{language === 'ar' ? 'كل المحافظات' : 'All Governorates'}</option>
+                  {EGYPT_GOVERNORATES.map(gov => (
+                    <option key={gov} value={gov}>{gov}</option>
+                  ))}
+                </select>
+              </div>
+
             </div>
 
             {/* Event Cards Grid */}

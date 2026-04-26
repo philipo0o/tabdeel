@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { useState } from 'react'
 import { useLanguage } from '@/lib/LanguageContext'
 
@@ -22,18 +23,24 @@ export default function Navigation() {
   }
 
   return (
-    <nav className="bg-white shadow-lg fixed top-0 w-full z-50">
+    <nav className="bg-white/60 backdrop-blur-md shadow-sm fixed top-0 w-full z-50 transition-all duration-300">
       <div className="max-w-7xl mx-auto px-4">
-        <div className="flex justify-between items-center h-16">
-          <div className="flex items-center">
-            <Link href="/" className="text-xl font-bold text-gray-800">
-              تبديل
+        <div className="flex justify-center items-center h-16 relative">
+          {/* Centered Components: Logo + Nav Items */}
+          <div className="flex items-center gap-8">
+            <Link href="/" className="flex items-center transition-transform hover:scale-105">
+              <Image 
+                src="/tabdeel%20logo.PNG" 
+                alt="Tabdeel Logo" 
+                width={120} 
+                height={48} 
+                className="h-12 w-auto object-contain"
+                priority
+              />
             </Link>
-          </div>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:block">
-            <div className="flex items-center space-x-4 space-x-reverse">
+            {/* Desktop Navigation */}
+            <div className="hidden md:flex items-center space-x-4 space-x-reverse">
               {navItems.map((item) => (
                 <Link
                   key={item.href}
@@ -43,30 +50,31 @@ export default function Navigation() {
                   {item.label}
                 </Link>
               ))}
-              
-              {/* Language Switcher */}
-              <button
-                onClick={toggleLanguage}
-                className="bg-black text-white px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors"
-              >
-                {language === 'ar' ? 'EN' : 'عربي'}
-              </button>
             </div>
           </div>
 
-          {/* Mobile menu button */}
-          <div className="md:hidden flex items-center gap-2">
-            {/* Mobile Language Switcher */}
+          {/* Edge Components: Language Switcher & Mobile Menu */}
+          <div className="absolute end-0 flex items-center gap-2">
+            {/* Desktop Language Switcher */}
             <button
               onClick={toggleLanguage}
-              className="bg-black text-white px-2 py-1 rounded text-xs font-medium hover:bg-gray-800 transition-colors"
+              className="hidden md:block bg-black text-white px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors"
             >
               {language === 'ar' ? 'EN' : 'عربي'}
             </button>
-            
+
+            {/* Mobile Language Switcher */}
+            <button
+              onClick={toggleLanguage}
+              className="md:hidden bg-black text-white px-2 py-1 rounded text-xs font-medium hover:bg-gray-800 transition-colors"
+            >
+              {language === 'ar' ? 'EN' : 'عربي'}
+            </button>
+
+            {/* Mobile menu button */}
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="text-gray-600 hover:text-gray-900 focus:outline-none focus:text-gray-900"
+              className="md:hidden text-gray-600 hover:text-gray-900 focus:outline-none focus:text-gray-900"
             >
               <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 {isOpen ? (

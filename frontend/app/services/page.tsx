@@ -2,6 +2,8 @@
 
 import { useLanguage } from '@/lib/LanguageContext'
 
+import Link from 'next/link'
+
 export default function Services() {
   const { t, language } = useLanguage()
 
@@ -19,8 +21,26 @@ export default function Services() {
         </h1>
         <p className="text-gray-500 text-lg mb-10 text-center max-w-2xl">
           {language === 'ar' 
-            ? 'تصفح خريطة التفاعل المباشرة لاكتشاف أحدث الخدمات وإضافة إشاراتك الخاصة.' 
-            : 'Browse the interactive map to discover the latest services and drop your own pins.'}
+            ? (
+              <>
+                هنا تقدر تلاقي أماكن لكل مايخص الدراجة. زي أماكن تصليح وبيع وتأجير وركنات في محافظتك أو مدينتك.
+                <br />
+                عايز تزود مكان على الخريطة؟{' '}
+                <Link href="/contact" className="text-blue-600 hover:text-blue-800 underline decoration-2 underline-offset-4 font-medium transition-colors">
+                  تواصل معنا
+                </Link>
+                {' '}بالتفاصيل وهنزودها!
+              </>
+            )
+            : (
+              <>
+                Here you can find places for everything related to bicycles, such as repair shops, sales, rentals, and parking spots in your governorate or city. Want to add a place to the map?{' '}
+                <Link href="/contact" className="text-blue-600 hover:text-blue-800 underline decoration-2 underline-offset-4 font-medium transition-colors">
+                  Contact us
+                </Link>
+                {' '}with the details and we'll add it!
+              </>
+            )}
         </p>
 
         {/* Frameless Padlet Map Container */}

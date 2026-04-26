@@ -69,6 +69,9 @@ export class Event {
   organizerName?: string;
 
   @Column({ nullable: true })
+  governorate?: string;
+
+  @Column({ nullable: true })
   socialMediaUrl?: string;
 
   @CreateDateColumn()

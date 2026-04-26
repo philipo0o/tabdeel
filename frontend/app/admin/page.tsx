@@ -695,7 +695,16 @@ function EventsManager() {
   const [type, setType] = useState('ride')
   const [featuredImage, setFeaturedImage] = useState<File | null>(null)
   const [organizerName, setOrganizerName] = useState('')
+  const [governorate, setGovernorate] = useState('')
   const [socialMediaUrl, setSocialMediaUrl] = useState('')
+
+  const EGYPT_GOVERNORATES = [
+    'Cairo', 'Alexandria', 'Giza', 'Qalyubia', 'Port Said', 'Suez', 
+    'Gharbia', 'Dakahlia', 'Ismailia', 'Asyut', 'Fayoum', 'Sharqia', 
+    'Aswan', 'Damietta', 'Beheira', 'Minya', 'Beni Suef', 'Qena', 
+    'Sohag', 'Red Sea', 'New Valley', 'Matrouh', 'North Sinai', 
+    'South Sinai', 'Luxor'
+  ].sort()
 
   useEffect(() => { if (mode === 'list') fetchItems() }, [mode])
 
@@ -714,6 +723,7 @@ function EventsManager() {
     setLocation(item.location || ''); setType(item.type || 'ride')
     setStartDate(formatForInput(item.startDate)); setEndDate(formatForInput(item.endDate))
     setOrganizerName(item.organizerName || '')
+    setGovernorate(item.governorate || '')
     setSocialMediaUrl(item.socialMediaUrl || '')
     setFeaturedImage(null); setStatusMsg({ type: '', text: '' }); setMode('form')
   }
@@ -725,7 +735,7 @@ function EventsManager() {
 
   const handleAddNew = () => {
     setEditingId(null); setTitle(''); setDescription(''); setLocation(''); setStartDate(''); setEndDate(''); setType('ride')
-    setOrganizerName(''); setSocialMediaUrl(''); setFeaturedImage(null); setStatusMsg({ type: '', text: '' }); setMode('form')
+    setOrganizerName(''); setGovernorate(''); setSocialMediaUrl(''); setFeaturedImage(null); setStatusMsg({ type: '', text: '' }); setMode('form')
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -743,7 +753,7 @@ function EventsManager() {
         startDate: new Date(startDate).toISOString(), 
         endDate: new Date(endDate).toISOString(), 
         type, authorId: 1, status: 'upcoming',
-        organizerName, socialMediaUrl
+        organizerName, governorate, socialMediaUrl
       }
       if (imageUrl) payload.featuredImage = imageUrl
 
@@ -794,8 +804,17 @@ function EventsManager() {
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div><label className="block text-sm font-medium mb-1">Title</label><input required type="text" value={title} onChange={e => setTitle(e.target.value)} className="w-full px-4 py-2 border rounded-lg" /></div>
-              <div><label className="block text-sm font-medium mb-1">Location</label><input required type="text" value={location} onChange={e => setLocation(e.target.value)} className="w-full px-4 py-2 border rounded-lg" /></div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Governorate</label>
+                <select value={governorate} onChange={e => setGovernorate(e.target.value)} className="w-full px-4 py-2 border rounded-lg bg-white">
+                  <option value="">Select a Governorate</option>
+                  {EGYPT_GOVERNORATES.map(gov => (
+                    <option key={gov} value={gov}>{gov}</option>
+                  ))}
+                </select>
+              </div>
             </div>
+            <div><label className="block text-sm font-medium mb-1">Location / Address</label><input required type="text" value={location} onChange={e => setLocation(e.target.value)} className="w-full px-4 py-2 border rounded-lg" /></div>
             <div><label className="block text-sm font-medium mb-1">Description</label><textarea required value={description} onChange={e => setDescription(e.target.value)} rows={3} className="w-full px-4 py-2 border rounded-lg"></textarea></div>
             <div className="grid grid-cols-2 gap-4">
               <div><label className="block text-sm font-medium mb-1">Start Date/Time</label><input required type="datetime-local" value={startDate} onChange={e => setStartDate(e.target.value)} className="w-full px-4 py-2 border rounded-lg bg-white" /></div>

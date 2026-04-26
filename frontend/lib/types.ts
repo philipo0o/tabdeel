@@ -156,6 +156,7 @@ export interface Event {
   status: 'upcoming' | 'ongoing' | 'completed' | 'cancelled' | string
   authorId: number
   organizerName?: string
+  governorate?: string
   socialMediaUrl?: string
   createdAt: string
   updatedAt: string

@@ -15,6 +15,7 @@ import { AlbumsModule } from './albums/albums.module';
 import { NewsModule } from './news/news.module';
 import { ServicesModule } from './services/services.module';
 import { UploadModule } from './upload/upload.module';
+import { ContactModule } from './contact/contact.module';
 import { getDatabaseConfig } from './config/database.config';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 
@@ -39,6 +40,7 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter';
     NewsModule,
     ServicesModule,
     UploadModule,
+    ContactModule,
   ],
   providers: [
     {

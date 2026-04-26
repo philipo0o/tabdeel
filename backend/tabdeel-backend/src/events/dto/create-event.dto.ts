@@ -49,6 +49,10 @@ export class CreateEventDto {
 
   @IsString()
   @IsOptional()
+  governorate?: string;
+
+  @IsString()
+  @IsOptional()
   socialMediaUrl?: string;
 
   @IsNumber()
