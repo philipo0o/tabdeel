@@ -1,7 +1,8 @@
 import axios from 'axios'
 
 // Create axios instance with base configuration
-export const API_BASE_URL = (process.env.NEXT_PUBLIC_API_URL || 'http://76.13.15.98:3001').replace(/\/api$/, '')
+// FORCING VPS IP FOR PRODUCTION DEPLOYMENT
+export const API_BASE_URL = 'http://76.13.15.98:3001'
 
 const api = axios.create({
   baseURL: API_BASE_URL,
