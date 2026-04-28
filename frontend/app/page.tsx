@@ -26,8 +26,8 @@ export default function Home() {
 
   /* Optimized images */
   const imageSrc = language === 'en'
-    ? "/Landing_Presetation_full_4k_EN_optimized.webp"
-    : "/Landing_Presetation_full_4k_optimized.webp"
+    ? "/Landing_Presetation_full_4k_EN_optimized.JPG"
+    : "/Landing_Presetation_full_4k_optimized.JPG"
 
   return (
     <div className="main-wrapper">

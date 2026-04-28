@@ -65,7 +65,7 @@ services:
   frontend:
     build:
       context: ./frontend
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
     container_name: tabdeel_frontend
     ports:
       - "3002:3002"

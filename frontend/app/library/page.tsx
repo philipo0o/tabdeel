@@ -69,7 +69,7 @@ export default function Library() {
           ></div>
 
           {/* ألبومات (Albums) - Center ornate frame */}
-          <div
+          {/* <div
             className="absolute cursor-pointer hover:bg-opacity-10 transition-colors"
             style={{
               top: '40%',
@@ -79,7 +79,7 @@ export default function Library() {
             }}
             onClick={() => router.push('/albums')}
             title={t('albums')}
-          ></div>
+          ></div> */}
 
           {/* مقالات (Articles) - Right frame */}
           <div

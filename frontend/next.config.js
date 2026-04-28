@@ -3,30 +3,26 @@ const nextConfig = {
   experimental: {
     appDir: true,
   },
-  // CHANGE: 'export' allows static HTML deployment to Hostinger Shared Hosting.
-  // If you move to a VPS later, change this back to 'standalone'.
-  output: 'export',
+  // CHANGE: Changed to 'standalone' for VPS Docker deployment.
+  output: 'standalone',
 
-  // CHANGE: Default Image Optimization API is not compatible with static export.
+  // CHANGE: Default Image Optimization API works with standalone output.
   images: {
     unoptimized: true,
   },
 
-  // CHANGE: Helps with routing on static hosts (creates /about/index.html instead of /about.html)
-  trailingSlash: true,
+  // CHANGE: Disable trailingSlash for VPS deployment, as it is mostly for static hosts.
+  trailingSlash: false,
 
-  // CHANGE: Rewrites are not supported in static export.
-  // API calls must be direct URLs in the client code.
-  /*
+  // CHANGE: Enable rewrites for VPS Docker deployment to connect to the backend container.
   async rewrites() {
     return [
       {
         source: '/api/:path*',
-        destination: process.env.NEXT_PUBLIC_API_URL ? `${process.env.NEXT_PUBLIC_API_URL}/api/:path*` : 'http://tabdeel-backend:3001/api/:path*',
+        destination: process.env.NEXT_PUBLIC_API_URL ? `${process.env.NEXT_PUBLIC_API_URL}/api/:path*` : 'http://tabdeel_backend:3001/api/:path*',
       },
     ];
   },
-  */
 }
 
 module.exports = nextConfig
