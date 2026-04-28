@@ -34,10 +34,6 @@ services:
     container_name: biking_club_app
     ports:
       - "3000:3000"
-    volumes:
-      - .:/usr/src/app
-      - /usr/src/app/node_modules
-    command: npm run start:dev
     depends_on:
       - postgres
     environment:

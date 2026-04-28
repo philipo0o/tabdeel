@@ -21,8 +21,9 @@ services:
 
   nest-app:
     build:
-      context: .
+      context: ./backend/tabdeel-backend
       dockerfile: Dockerfile
+    image: tabdeel-nest-app:latest
     container_name: biking_club_backend
     restart: always
     ports:
@@ -44,8 +45,9 @@ services:
 
   frontend:
     build:
-      context: ../frontend
+      context: ./frontend
       dockerfile: Dockerfile
+    image: tabdeel-frontend:latest
     container_name: biking_club_frontend
     restart: always
     ports:
