@@ -1,21 +1,22 @@
-# Use Node.js LTS version
-FROM node:18-alpine
+FROM node:18-alpine AS builder
 
-# Set working directory
 WORKDIR /usr/src/app
 
-# Copy package.json and install dependencies
 COPY package*.json ./
-RUN npm install
+RUN npm ci --only=production && npm install
 
-# Copy the rest of the project
 COPY . .
-
-# Build the NestJS project
 RUN npm run build
 
-# Expose the application port
-EXPOSE 3000
+# Production image
+FROM node:18-alpine
 
-# Run the app in production mode
-CMD ["npm", "run", "start:prod"]
+WORKDIR /usr/src/app
+
+COPY --from=builder /usr/src/app/dist ./dist
+COPY --from=builder /usr/src/app/node_modules ./node_modules
+COPY package*.json ./
+
+EXPOSE 3001
+
+CMD ["node", "dist/main"]

@@ -63,7 +63,7 @@ export default function Articles() {
                     {article.title}
                   </h3>
                   <div className="text-gray-600 mb-4 prose max-w-none line-clamp-3">
-                    {article.excerpt || article.content.substring(0, 150) + '...'}
+                    {article.excerpt || (article.content ? article.content.substring(0, 150) + '...' : '')}
                   </div>
                   <div className="flex justify-between items-center mt-4">
                     <span className="text-sm text-gray-500">

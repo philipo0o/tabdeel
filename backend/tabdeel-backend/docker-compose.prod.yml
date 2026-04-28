@@ -1,0 +1,94 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: biking_club_postgres
+    restart: always
+    environment:
+      POSTGRES_DB: ${DB_NAME:-biking_club}
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  nest-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: biking_club_backend
+    restart: always
+    ports:
+      - "3001:3001"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: ${DB_USER:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-postgres}
+      DB_NAME: ${DB_NAME:-biking_club}
+      JWT_SECRET: ${JWT_SECRET:-change-this-in-production}
+      NODE_ENV: production
+      PORT: 3001
+    networks:
+      - app-network
+
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    container_name: biking_club_frontend
+    restart: always
+    ports:
+      - "3000:3002"
+    depends_on:
+      - nest-app
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_API_URL: http://nest-app:3001
+    networks:
+      - app-network
+
+  nginx:
+    image: nginx:alpine
+    container_name: biking_club_nginx
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+      - certbot_data:/var/www/certbot:ro
+      - certbot_certs:/etc/letsencrypt:ro
+    depends_on:
+      - nest-app
+      - frontend
+    networks:
+      - app-network
+
+  certbot:
+    image: certbot/certbot
+    container_name: biking_club_certbot
+    volumes:
+      - certbot_data:/var/www/certbot
+      - certbot_certs:/etc/letsencrypt
+    command: certonly --webroot --webroot-path=/var/www/certbot --email ${SSL_EMAIL} --agree-tos --no-eff-email -d ${DOMAIN}
+
+volumes:
+  postgres_data:
+  certbot_data:
+  certbot_certs:
+
+networks:
+  app-network:
+    driver: bridge
