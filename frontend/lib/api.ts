@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-// Smart Detection: Use VPS IP if we are on the server, otherwise use localhost
+// Smart Detection: Use Domain if we are on the server, otherwise use localhost
 const getBaseUrl = () => {
   if (typeof window !== 'undefined') {
     const hostname = window.location.hostname;
@@ -10,13 +10,19 @@ const getBaseUrl = () => {
       return 'http://localhost:3001'
     }
     
-    // If the browser URL contains the VPS IP or Domain, use the VPS backend
-    if (hostname === '76.13.15.98' || hostname === 'srv1626419.hstgr.cloud') {
-      return 'http://76.13.15.98:3001'
+    // If the browser URL contains the VPS IP or the NEW Domain, use the production backend
+    if (
+      hostname === '76.13.15.98' || 
+      hostname === 'srv1626419.hstgr.cloud' || 
+      hostname === 'egyptiancyclingobservatory.com' ||
+      hostname === 'www.egyptiancyclingobservatory.com'
+    ) {
+      // In production with a domain, we usually use the domain directly
+      return 'https://egyptiancyclingobservatory.com/api'
     }
   }
   
-  // Fallback for SSR (Server Side Rendering) or other cases
+  // Fallback for SSR or other cases
   return process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'
 }
 

@@ -15,7 +15,7 @@ services:
     networks:
       - tabdeel-network
 
-  # PgAdmin Service (Optional - for DB management)
+  # PgAdmin Service
   pgadmin:
     image: dpage/pgadmin4
     container_name: tabdeel_pgadmin
@@ -61,20 +61,40 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
       args:
-        - NEXT_PUBLIC_API_URL=http://76.13.15.98:3001
+        - NEXT_PUBLIC_API_URL=https://egyptiancyclingobservatory.com
     container_name: tabdeel_frontend
     ports:
       - "3002:3002"
     environment:
       - NODE_ENV=production
-      - NEXT_PUBLIC_API_URL=http://76.13.15.98:3001
+      - NEXT_PUBLIC_API_URL=https://egyptiancyclingobservatory.com
     depends_on:
+      - backend
+    networks:
+      - tabdeel-network
+
+  # Reverse Proxy & SSL (Caddy)
+  caddy:
+    image: caddy:latest
+    container_name: tabdeel_proxy
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - frontend
       - backend
     networks:
       - tabdeel-network
 
 volumes:
   postgres_data:
+  caddy_data:
+  caddy_config:
 
 networks:
   tabdeel-network:

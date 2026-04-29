@@ -7,7 +7,14 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.enableCors({
-    origin: ['http://localhost:3000', 'http://localhost:3002', 'http://localhost:3005', 'http://76.13.15.98:3002'],
+    origin: [
+      'http://localhost:3000', 
+      'http://localhost:3002', 
+      'http://localhost:3005', 
+      'http://76.13.15.98:3002',
+      'https://egyptiancyclingobservatory.com',
+      'https://www.egyptiancyclingobservatory.com'
+    ],
     credentials: true,
   });
 
