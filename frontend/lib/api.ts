@@ -1,8 +1,26 @@
 import axios from 'axios'
 
-// Create axios instance with base configuration
-// FORCING VPS IP FOR PRODUCTION DEPLOYMENT
-export const API_BASE_URL = 'http://76.13.15.98:3001'
+// Smart Detection: Use VPS IP if we are on the server, otherwise use localhost
+const getBaseUrl = () => {
+  if (typeof window !== 'undefined') {
+    const hostname = window.location.hostname;
+    
+    // If we are running locally, ALWAYS use localhost
+    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+      return 'http://localhost:3001'
+    }
+    
+    // If the browser URL contains the VPS IP or Domain, use the VPS backend
+    if (hostname === '76.13.15.98' || hostname === 'srv1626419.hstgr.cloud') {
+      return 'http://76.13.15.98:3001'
+    }
+  }
+  
+  // Fallback for SSR (Server Side Rendering) or other cases
+  return process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'
+}
+
+export const API_BASE_URL = getBaseUrl().replace(/\/api$/, '')
 
 const api = axios.create({
   baseURL: API_BASE_URL,
