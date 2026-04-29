@@ -10,13 +10,18 @@ export const getDatabaseConfig = (): TypeOrmModuleOptions => {
         port: parseInt(process.env.DB_PORT || '5432'),
         username: process.env.DB_USER || 'postgres',
         password: process.env.DB_PASSWORD || 'postgres',
-        database: process.env.DB_NAME || 'postgres',
-        entities: [__dirname + '/../**/*.entity{.ts,.js}'],
+        database: process.env.DB_NAME || 'biking_club', // Changed default to biking_club
+        
+        // Use a more robust way to load entities in both dev and prod
+        entities: isProduction 
+            ? ['dist/**/*.entity.js'] 
+            : ['src/**/*.entity.ts'],
 
-        // IMPORTANT: Disable synchronize in production to prevent automatic schema changes
+        // IMPORTANT: Disable synchronize in production for existing databases, 
+        // but keep it true for now to initialize your VPS
         synchronize: true,
 
-        // Enable logging in development only
+        // Enable logging to see the actual SQL queries causing the 500 error
         logging: true,
 
         // SSL configuration for cloud databases
@@ -24,10 +29,10 @@ export const getDatabaseConfig = (): TypeOrmModuleOptions => {
 
         // Connection pooling for better performance
         extra: {
-            max: 20, // Maximum number of connections in the pool
-            min: 5,  // Minimum number of connections in the pool
-            idleTimeoutMillis: 30000, // Close idle connections after 30 seconds
-            connectionTimeoutMillis: 2000, // Timeout for establishing a connection
+            max: 20,
+            min: 5,
+            idleTimeoutMillis: 30000,
+            connectionTimeoutMillis: 5000, // Increased timeout
         },
     };
 };
