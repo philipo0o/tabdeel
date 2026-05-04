@@ -26,7 +26,7 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter';
     }),
     ServeStaticModule.forRoot({
       rootPath: join(process.cwd(), 'public'),
-      serveRoot: '/api',
+      exclude: ['/api*'], // Exclude /api routes so they hit the controllers
     }),
     TypeOrmModule.forRoot(getDatabaseConfig()),
     ContentModule,

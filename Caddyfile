@@ -1,8 +1,8 @@
 egyptiancyclingobservatory.com, www.egyptiancyclingobservatory.com {
-    # Reverse proxy to the frontend
-    reverse_proxy frontend:3002
-
-    # Reverse proxy /api to the backend
-    # We do NOT use handle_path because the backend routes already include /api
+    # Reverse proxy to the backend for API and Uploads
     reverse_proxy /api* backend:3001
+    reverse_proxy /uploads* backend:3001
+
+    # Reverse proxy everything else to the frontend
+    reverse_proxy * frontend:3002
 }
