@@ -194,10 +194,13 @@ function PublicationDetailContent() {
                     )}
                   </div>
                 ) : (
-                  <div className="text-center py-12 text-gray-600 bg-white rounded border border-gray-200">
-                    <p className="mb-2 font-semibold">Cannot display PDF as HTML.</p>
-                    <p className="text-sm text-gray-500 max-w-md mx-auto">Because you requested not to use a PDF Viewer or Download Button, and PDFs cannot be converted to HTML text, this file cannot be displayed.</p>
-                    <p className="text-sm text-gray-500 max-w-md mx-auto mt-2 italic">Please upload a .doc or .docx Word Document in the Admin panel to see HTML content extraction.</p>
+                  <div className="w-full bg-white border border-gray-300 rounded shadow-sm overflow-hidden">
+                    <iframe
+                      src={getImageUrl(fileUrl)}
+                      className="w-full border-0"
+                      style={{ height: '80vh', minHeight: '600px' }}
+                      title={title}
+                    />
                   </div>
                 )
               ) : (
