@@ -52,6 +52,8 @@ services:
       - SMTP_PASS=axhirquxozgwiecg
     depends_on:
       - postgres
+    volumes:
+      - uploads_data:/usr/src/app/public/uploads
     networks:
       - tabdeel-network
 
@@ -93,6 +95,7 @@ services:
 
 volumes:
   postgres_data:
+  uploads_data:
   caddy_data:
   caddy_config:
 
