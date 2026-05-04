@@ -1,9 +1,9 @@
 egyptiancyclingobservatory.com, www.egyptiancyclingobservatory.com {
-    handle /api* {
+    handle /api/* {
         reverse_proxy backend:3001
     }
 
-    handle /uploads* {
+    handle /uploads/* {
         reverse_proxy backend:3001
     }
 
