@@ -6,6 +6,9 @@ import { LanguageProvider } from '@/lib/LanguageContext'
 export const metadata: Metadata = {
   title: 'Tabdeel',
   description: 'Tabdeel - Egyptian Cycling Observatory',
+  icons: {
+    icon: '/tabdeel%20logo.PNG',
+  },
 }
 
 export default function RootLayout({
