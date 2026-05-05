@@ -11,12 +11,12 @@ export class CreateNewsDto {
   titleAr: string;
 
   @IsString()
-  @IsNotEmpty()
-  contentEn: string;
+  @IsOptional()
+  contentEn?: string;
 
   @IsString()
-  @IsNotEmpty()
-  contentAr: string;
+  @IsOptional()
+  contentAr?: string;
 
   @IsEnum(NewsCategory)
   category: NewsCategory;

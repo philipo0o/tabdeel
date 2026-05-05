@@ -20,11 +20,11 @@ export class News {
   @Column()
   titleAr: string;
 
-  @Column('text')
-  contentEn: string;
+  @Column({ type: 'text', nullable: true })
+  contentEn?: string;
 
-  @Column('text')
-  contentAr: string;
+  @Column({ type: 'text', nullable: true })
+  contentAr?: string;
 
   @Column({
     type: 'enum',

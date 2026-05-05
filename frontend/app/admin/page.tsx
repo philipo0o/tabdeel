@@ -227,8 +227,8 @@ function NewsManager() {
               <div><label className="block text-sm font-medium mb-1">Title (Ar)</label><input required type="text" value={titleAr} onChange={e => setTitleAr(e.target.value)} className="w-full px-4 py-2 border rounded-lg" /></div>
             </div>
             <div className="grid grid-cols-2 gap-4">
-              <div><label className="block text-sm font-medium mb-1">Content (En)</label><textarea required value={contentEn} onChange={e => setContentEn(e.target.value)} rows={4} className="w-full px-4 py-2 border rounded-lg"></textarea></div>
-              <div><label className="block text-sm font-medium mb-1">Content (Ar)</label><textarea required value={contentAr} onChange={e => setContentAr(e.target.value)} rows={4} className="w-full px-4 py-2 border rounded-lg"></textarea></div>
+              <div><label className="block text-sm font-medium mb-1">Content (En)</label><textarea value={contentEn} onChange={e => setContentEn(e.target.value)} rows={4} className="w-full px-4 py-2 border rounded-lg" placeholder="Optional if attaching a file"></textarea></div>
+              <div><label className="block text-sm font-medium mb-1">Content (Ar)</label><textarea value={contentAr} onChange={e => setContentAr(e.target.value)} rows={4} className="w-full px-4 py-2 border rounded-lg" placeholder="اختياري إذا تم إرفاق ملف"></textarea></div>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
