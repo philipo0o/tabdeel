@@ -7,6 +7,25 @@ import { News, NewsCategory } from '@/lib/types'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 
+// Load mammoth via plain script injection
+function loadMammothScript(): Promise<any> {
+  return new Promise((resolve, reject) => {
+    if ((window as any).mammoth) return resolve((window as any).mammoth)
+    let existing = document.getElementById('mammoth-script')
+    if (existing) {
+      const poll = setInterval(() => { if ((window as any).mammoth) { clearInterval(poll); resolve((window as any).mammoth) } }, 100)
+      setTimeout(() => { clearInterval(poll); reject(new Error('Mammoth timeout')) }, 10000)
+      return
+    }
+    const script = document.createElement('script')
+    script.id = 'mammoth-script'
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.21/mammoth.browser.min.js'
+    script.onload = () => resolve((window as any).mammoth)
+    script.onerror = () => reject(new Error('Failed to load mammoth'))
+    document.head.appendChild(script)
+  })
+}
+
 function NewsDetailContent() {
   const { t, language } = useLanguage()
   const searchParams = useSearchParams()
@@ -15,6 +34,8 @@ function NewsDetailContent() {
   const [newsItem, setNewsItem] = useState<News | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [htmlContent, setHtmlContent] = useState<string | null>(null)
+  const [parseLoading, setParseLoading] = useState(false)
 
   useEffect(() => {
     const fetchNews = async () => {
@@ -30,6 +51,30 @@ function NewsDetailContent() {
     }
     if (id) fetchNews()
   }, [id])
+
+  useEffect(() => {
+    const parseWord = async (url: string) => {
+      setParseLoading(true)
+      try {
+        const res = await api.get(url, { responseType: 'arraybuffer' })
+        const arrayBuffer = res.data as ArrayBuffer
+        const mammothAPI = await loadMammothScript()
+        const result = await mammothAPI.convertToHtml({ arrayBuffer })
+        setHtmlContent(result.value)
+      } catch (err) {
+        console.error('Failed to parse word doc:', err)
+      } finally {
+        setParseLoading(false)
+      }
+    }
+
+    if (newsItem?.fileAttachment) {
+      const isWord = newsItem.fileAttachment.toLowerCase().endsWith('.doc') || newsItem.fileAttachment.toLowerCase().endsWith('.docx')
+      if (isWord) {
+        parseWord(newsItem.fileAttachment)
+      }
+    }
+  }, [newsItem])
 
   const getCategoryColor = (category: NewsCategory) => {
     switch (category) {
@@ -65,6 +110,8 @@ function NewsDetailContent() {
   }
 
   const badgeColor = getCategoryColor(newsItem.category)
+  const isWord = newsItem.fileAttachment && (newsItem.fileAttachment.toLowerCase().endsWith('.doc') || newsItem.fileAttachment.toLowerCase().endsWith('.docx'))
+  const isPdf = newsItem.fileAttachment && newsItem.fileAttachment.toLowerCase().endsWith('.pdf')
 
   return (
     <div className="min-h-screen bg-gray-50 py-12">
@@ -106,7 +153,35 @@ function NewsDetailContent() {
             <h1 className="text-3xl md:text-5xl font-extrabold text-gray-900 mb-8 leading-tight">
               {language === 'ar' ? newsItem.titleAr : newsItem.titleEn}
             </h1>
+
+            {/* File attachment content */}
+            {newsItem.fileAttachment ? (
+              isWord ? (
+                <div className="w-full bg-white border border-gray-300 p-8 rounded shadow-sm min-h-[500px] mb-8">
+                  {parseLoading ? (
+                    <div className="flex flex-col items-center justify-center h-64 text-gray-500">
+                      <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500 mb-4"></div>
+                      <p>Parsing Document to HTML...</p>
+                    </div>
+                  ) : htmlContent ? (
+                    <div className="prose prose-lg max-w-none text-gray-800" dangerouslySetInnerHTML={{ __html: htmlContent }} />
+                  ) : (
+                    <p className="text-center text-gray-500 py-12">Failed to load content.</p>
+                  )}
+                </div>
+              ) : isPdf ? (
+                <div className="w-full bg-white border border-gray-300 rounded shadow-sm overflow-hidden mb-8">
+                  <iframe
+                    src={getImageUrl(newsItem.fileAttachment)}
+                    className="w-full border-0"
+                    style={{ height: '80vh', minHeight: '600px' }}
+                    title={language === 'ar' ? newsItem.titleAr : newsItem.titleEn}
+                  />
+                </div>
+              ) : null
+            ) : null}
             
+            {/* Text content (always shown as fallback/supplement) */}
             <div 
               className="prose prose-lg max-w-none text-gray-700 leading-relaxed mb-8"
               dangerouslySetInnerHTML={{ __html: language === 'ar' ? newsItem.contentAr : newsItem.contentEn }} 

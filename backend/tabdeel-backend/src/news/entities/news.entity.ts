@@ -35,6 +35,9 @@ export class News {
   @Column({ nullable: true })
   featuredImage?: string;
 
+  @Column({ nullable: true })
+  fileAttachment?: string;
+
   @Column({ default: 0 })
   viewCount: number;
 

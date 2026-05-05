@@ -70,6 +70,7 @@ export interface News {
   contentAr: string
   category: NewsCategory
   featuredImage?: string
+  fileAttachment?: string
   viewCount: number
   isPublished: boolean
   publishedAt?: string

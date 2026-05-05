@@ -134,6 +134,7 @@ function NewsManager() {
   const [contentAr, setContentAr] = useState('')
   const [category, setCategory] = useState('new')
   const [featuredImage, setFeaturedImage] = useState<File | null>(null)
+  const [attachment, setAttachment] = useState<File | null>(null)
 
   useEffect(() => { if (mode === 'list') fetchItems() }, [mode])
 
@@ -144,7 +145,7 @@ function NewsManager() {
   const handleEdit = (item: any) => {
     setEditingId(item.id); setTitleEn(item.titleEn); setTitleAr(item.titleAr)
     setContentEn(item.contentEn); setContentAr(item.contentAr); setCategory(item.category)
-    setFeaturedImage(null); setStatusMsg({ type: '', text: '' }); setMode('form')
+    setFeaturedImage(null); setAttachment(null); setStatusMsg({ type: '', text: '' }); setMode('form')
   }
 
   const handleDelete = async (id: number) => {
@@ -153,7 +154,7 @@ function NewsManager() {
   }
 
   const handleAddNew = () => {
-    setEditingId(null); setTitleEn(''); setTitleAr(''); setContentEn(''); setContentAr(''); setCategory('new'); setFeaturedImage(null); setStatusMsg({ type: '', text: '' }); setMode('form')
+    setEditingId(null); setTitleEn(''); setTitleAr(''); setContentEn(''); setContentAr(''); setCategory('new'); setFeaturedImage(null); setAttachment(null); setStatusMsg({ type: '', text: '' }); setMode('form')
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -166,8 +167,16 @@ function NewsManager() {
         imageUrl = res.data.url
       }
       
+      let fileAttachmentUrl = ''
+      if (attachment) {
+        const fd = new FormData(); fd.append('file', attachment)
+        const res = await api.post('/api/upload', fd, { headers: { 'Content-Type': 'multipart/form-data' } })
+        fileAttachmentUrl = res.data.url
+      }
+
       const payload: any = { titleEn, titleAr, contentEn, contentAr, category, authorId: 1, isPublished: true }
       if (imageUrl) payload.featuredImage = imageUrl
+      if (fileAttachmentUrl) payload.fileAttachment = fileAttachmentUrl
 
       if (editingId) {
         await api.put(`/api/news/${editingId}`, payload)
@@ -231,6 +240,12 @@ function NewsManager() {
               <div>
                 <label className="block text-sm font-medium mb-1">Cover Image {editingId && '(Leave empty to keep)'}</label>
                 <input type="file" accept="image/*" onChange={e => setFeaturedImage(e.target.files?.[0] || null)} className="w-full px-4 py-2 border rounded-lg bg-white" />
+              </div>
+            </div>
+            <div className="grid grid-cols-1 gap-4">
+              <div>
+                <label className="block text-sm font-medium mb-1">Attach File (PDF/Word) {editingId && '(Leave empty to keep)'}</label>
+                <input type="file" accept=".pdf,.doc,.docx" onChange={e => setAttachment(e.target.files?.[0] || null)} className="w-full px-4 py-2 border rounded-lg bg-white" />
               </div>
             </div>
             <button disabled={loading} type="submit" className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 disabled:bg-blue-400">{loading ? 'Saving...' : (editingId ? 'Update News' : 'Publish News')}</button>

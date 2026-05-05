@@ -25,6 +25,10 @@ export class CreateNewsDto {
   @IsOptional()
   featuredImage?: string;
 
+  @IsString()
+  @IsOptional()
+  fileAttachment?: string;
+
   @IsBoolean()
   @IsOptional()
   isPublished?: boolean;
