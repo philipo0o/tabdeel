@@ -31,6 +31,18 @@ export default function Home() {
 
   return (
     <div className="main-wrapper">
+      {/* Logo Section */}
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '24px 0', backgroundColor: '#fff' }}>
+        <Image
+          src="/tabdeel%20logo.PNG"
+          alt="Tabdeel Logo"
+          width={180}
+          height={180}
+          priority={true}
+          style={{ objectFit: 'contain' }}
+        />
+      </div>
+
       {/* Optimized Next.js Image component for faster loading */}
       <Image
         src={imageSrc}

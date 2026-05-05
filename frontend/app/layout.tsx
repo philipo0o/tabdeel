@@ -4,8 +4,8 @@ import Navigation from '@/components/Navigation'
 import { LanguageProvider } from '@/lib/LanguageContext'
 
 export const metadata: Metadata = {
-  title: 'رحلة سلسة - بدون فراغات',
-  description: 'موقع تبديل - رحلة سلسة بدون فراغات',
+  title: 'Tabdeel',
+  description: 'Tabdeel - Egyptian Cycling Observatory',
 }
 
 export default function RootLayout({
